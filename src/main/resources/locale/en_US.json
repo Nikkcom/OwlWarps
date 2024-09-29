@@ -1,5 +1,5 @@
 {
-  "plugin_prefix":"[OwlWarps]",
-  "version_message":"%owl_warps_prefix% The plugin version is %owl_warps_version%."
+  "plugin-prefix":"[OwlWarps]",
+  "version-message":"%owl_warps_prefix% The plugin version is %owl_warps_version%."
 
 }
