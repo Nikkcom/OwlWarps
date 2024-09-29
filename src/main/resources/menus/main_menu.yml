@@ -1,0 +1,40 @@
+menu:
+  name: 'Menu name'
+  size: 54
+  menu-actions:
+    # Can be whatever
+    ping_open_sound:
+      type: PLAY_SOUND
+      trigger: OPEN_MENU
+      sound: 'ENTITY_PLAYER_LEVELUP'
+      volume: 1.0
+      pitch: 1.0
+    # Can be whatever
+    ping_close_sound:
+      type: PLAY_SOUND
+      trigger: CLOSE_MENU
+      sound: 'ENTITY_PLAYER_LEVELUP'
+      volume: 0.9
+      pitch: 1.0
+  items:
+    border-glass:
+      slot: 0
+      material: 'BLUE_STAINED_GLASS_PANE'
+      display-name: ''
+      lore:
+        - ''
+      actions:
+        # Can be whatever
+        ping_sound:
+          type: PLAY_SOUND
+          trigger: LEFT_CLICK
+          sound: 'ENTITY_PLAYER_LEVELUP'
+          volume: 1.0
+          pitch: 1.0
+        # Can be whatever
+        ping_close_sound:
+          type: PLAY_SOUND
+          trigger: CLOSE_MENU
+          sound: 'ENTITY_PLAYER_LEVELUP'
+          volume: 0.9
+          pitch: 1.0
