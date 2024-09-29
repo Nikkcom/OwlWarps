@@ -9,7 +9,7 @@ public class Messages {
 
     public static String getMessage(String key) {
         if (messages.containsKey(key)) return messages.get(key);
-        return "Error in the locale file!";
+        return String.format("Could not find the json key '%s'. Please review the locale files!", key);
     }
 
     public static void setMessage(String key, String message) {
