@@ -1,0 +1,7 @@
+name: OwlWarps
+version: '1.0-SNAPSHOT'
+main: me.nikkcom.owlWarps.OwlWarps
+api-version: '1.20'
+authors: [ Nikkcom ]
+description: A Playerwarp plugin for minecraft!
+website: https://www.spigotmc.org/members/01v.348826/
