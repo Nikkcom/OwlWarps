@@ -100,6 +100,7 @@ public class Menu {
         if (action == null) menuClickActions.remove(index);
         else menuClickActions.put(index, action);
     }
+
     public MenuClick getGeneralClickAction() { return generalClickAction; }
 
     protected void setGeneralClickAction(MenuClick generalClickAction) { this.generalClickAction = generalClickAction; }
