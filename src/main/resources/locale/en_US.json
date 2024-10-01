@@ -1,5 +1,10 @@
 {
   "plugin-prefix":"[OwlWarps]",
-  "version-message":"%owl_warps_prefix% The plugin version is %owl_warps_version%."
+  "version-message":"%owl_warps_prefix% The plugin version is %owl_warps_version%.",
+  "warp-already-exists": "This warp already exists!",
+  "warp-no-exists": "This warp does not exists!",
+  "no-permission-to-delete-warp": "You do not have permission to delete this warp!",
+  "warp-delete-successful": "'%warp%' was successfully deleted.",
+  "warp-create-successful": "'%warp%' was successfully created."
 
 }
