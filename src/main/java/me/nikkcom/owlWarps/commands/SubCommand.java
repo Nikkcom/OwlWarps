@@ -1,8 +1,9 @@
 package me.nikkcom.owlWarps.commands;
 
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-public abstract class SubCommand {
+public abstract class SubCommand implements TabCompletable {
 
     public abstract String getName();
 
