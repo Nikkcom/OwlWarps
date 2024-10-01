@@ -19,6 +19,10 @@ public class ClickableItem {
         return itemStack;
     }
 
+    public Menu.MenuClick getAction() {
+        return action;
+    }
+
     public void execute(Player player, InventoryClickEvent event) {
         if (action != null) {
             action.click(player, event);
