@@ -7,6 +7,9 @@ description: A Playerwarp plugin for minecraft!
 website: https://www.spigotmc.org/members/01v.348826/
 commands:
   pwarp:
+    usage: /pwarp
   owlwarps:
     aliases:
       - ow
+  pw:
+    usage: /pwarp
