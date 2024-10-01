@@ -95,12 +95,16 @@ public class Menu {
     public interface MenuClose { void close(Player p); }
 
     public void setItem(int index, ItemStack item) { inventory.setItem(index, item); }
+    public void setItem(int index, ClickableItem clickableItem) {
+        inventory.setItem(index, clickableItem.getItemStack());
+        if (clickableItem.getAction() == null) menuClickActions.remove(index);
+        else menuClickActions.put(index, clickableItem.getAction());
+    }
     public void setItem(int index, ItemStack item, MenuClick action) {
         inventory.setItem(index, item);
         if (action == null) menuClickActions.remove(index);
         else menuClickActions.put(index, action);
     }
-
     public MenuClick getGeneralClickAction() { return generalClickAction; }
 
     protected void setGeneralClickAction(MenuClick generalClickAction) { this.generalClickAction = generalClickAction; }
