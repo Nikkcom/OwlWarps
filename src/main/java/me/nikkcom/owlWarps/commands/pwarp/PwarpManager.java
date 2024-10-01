@@ -1,8 +1,9 @@
 package me.nikkcom.owlWarps.commands.pwarp;
 
 import me.nikkcom.owlWarps.OwlWarps;
+import me.nikkcom.owlWarps.commands.CommandManager;
 import me.nikkcom.owlWarps.commands.SubCommand;
-import me.nikkcom.owlWarps.commands.owlwarps.VersionCommand;
+import me.nikkcom.owlWarps.commands.pwarp.subcommands.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -20,9 +21,8 @@ import java.util.List;
  * with the pwarp command.
  * </p>
  */
-public class PwarpManager implements CommandExecutor, TabCompleter {
+public class PwarpManager extends CommandManager implements CommandExecutor, TabCompleter {
 
-    private final OwlWarps owlWarps;
     private final ArrayList<SubCommand> subCommands = new ArrayList<>();
 
     /**
@@ -31,9 +31,13 @@ public class PwarpManager implements CommandExecutor, TabCompleter {
      * @param owlWarps The instance of the main class plugin instance.
      */
     public PwarpManager(OwlWarps owlWarps) {
-        this.owlWarps = owlWarps;
+        super(owlWarps);
 
         subCommands.add(new MenuCommand());
+        subCommands.add(new CreateCommand(owlWarps));
+        subCommands.add(new DeleteCommand(owlWarps));
+        subCommands.add(new ListCommand(owlWarps));
+        subCommands.add(new TeleportCommand(owlWarps));
     }
 
     /**
@@ -68,16 +72,38 @@ public class PwarpManager implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        List<String> list = new ArrayList<>();
+        List<String> completions = new ArrayList<>();
 
-        if (sender instanceof Player) {
-            if (command.getName().equalsIgnoreCase("pwarp")){
-
-                return list;
-            }
+        if (!(sender instanceof Player)) {
+            return Collections.emptyList();
         }
 
-        return null;
+        if (!command.getName().equalsIgnoreCase("pwarp")){
+            return Collections.emptyList();
+        }
+
+        Player player = (Player) sender;
+
+        for (SubCommand subCommand : subCommands) {
+            completions.add(subCommand.getName());
+        }
+        Collections.sort(completions);
+
+        if (args.length == 0) {
+            return completions;
+        } else if (args.length == 1) {
+            completions.removeIf(str -> !str.startsWith(args[0].toLowerCase()));
+            Collections.sort(completions);
+            return completions;
+        } else if (args.length > 1) {
+
+            for (SubCommand subCommand : subCommands) {
+                if (subCommand.getName().equalsIgnoreCase(args[0])) {
+                    return subCommand.onTabComplete(player, args);
+                }
+            }
+        }
+        return Collections.emptyList();
     }
 
     /**
