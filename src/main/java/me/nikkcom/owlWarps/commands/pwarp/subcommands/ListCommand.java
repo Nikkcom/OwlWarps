@@ -49,11 +49,6 @@ public class ListCommand extends SubCommand {
             player.sendMessage(warp.getRawName());
         }
 
-
-
-
-
-
     }
 
 
