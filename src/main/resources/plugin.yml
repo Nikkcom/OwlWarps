@@ -6,6 +6,49 @@ authors: [ Nikkcom ]
 description: A Playerwarp plugin for minecraft!
 website: https://www.spigotmc.org/members/01v.348826/
 softdepend: ["PlaceholderAPI"]
+
+permissions:
+  owlwarps.*:
+    description: Gives access to all commands and features of OwlWarps plugin.
+    default: op
+    children:
+      owlwarps.pwarp.*: true
+      owlwarps.pwarp.create: true
+      owlwarps.pwarp.delete: true
+      owlwarps.pwarp.list: true
+      owlwarps.pwarp.menu: true
+      owlwarps.pwarp.teleport: true
+
+  owlwarps.pwarp.*:
+    description: Gives access to all pwarp commands!
+    children:
+      owlwarps.pwarp.create: true
+      owlwarps.pwarp.delete: true
+      owlwarps.pwarp.list: true
+      owlwarps.pwarp.menu: true
+      owlwarps.pwarp.teleport: true
+
+  owlwarps.pwarp.create:
+    description: Allows the creation of new warps
+    default: true
+
+  owlwarps.pwarp.delete:
+    description: Allows deletion of existing warps
+    default: true
+
+  owlwarps.pwarp.list:
+    description: Allows listing of warps
+    default: true
+  owlwarps.pwarp.menu:
+    description: Allows opening the pwarp menu
+    default: true
+  owlwarps.pwarp.teleport:
+    description: Allows teleportation to a pwarp using commands
+    default: true
+
+
+
+
 commands:
   pwarp:
     usage: /pwarp
