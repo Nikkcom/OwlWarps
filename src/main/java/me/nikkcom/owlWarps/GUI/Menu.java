@@ -1,6 +1,7 @@
 package me.nikkcom.owlWarps.GUI;
 
 import me.clip.placeholderapi.PlaceholderAPI;
+import me.nikkcom.owlWarps.utils.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -190,10 +191,16 @@ public class Menu {
 
         if (meta != null) {
             String parsedName = PlaceholderAPI.setPlaceholders(p, meta.getDisplayName());
+            parsedName = StringUtil.color(parsedName);
             meta.setDisplayName(parsedName);
 
             if (meta.getLore() != null && !meta.getLore().isEmpty()) {
-                List<String> parsedLore = PlaceholderAPI.setPlaceholders(p, meta.getLore());
+                List<String> parsedLore = new ArrayList<>();
+                for (String str : meta.getLore()) {
+                    str = PlaceholderAPI.setPlaceholders(p, str);
+                    str = StringUtil.color(str);
+                    parsedLore.add(str);
+                }
                 meta.setLore(parsedLore);
             }
         }
