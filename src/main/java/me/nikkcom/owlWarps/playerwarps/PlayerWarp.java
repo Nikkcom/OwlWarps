@@ -1,5 +1,6 @@
 package me.nikkcom.owlWarps.playerwarps;
 
+import me.nikkcom.owlWarps.configuration.Message;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -159,5 +160,10 @@ public class PlayerWarp {
 
     public void setLastActive(LocalDateTime lastActive) {
         this.lastActive = lastActive;
+    }
+
+    public void teleport(Player player) {
+        player.teleport(getLocation());
+        player.sendMessage(Message.PWARP_TELEPORT_SUCCESS.papiColor(player, getWarpName()));
     }
 }
