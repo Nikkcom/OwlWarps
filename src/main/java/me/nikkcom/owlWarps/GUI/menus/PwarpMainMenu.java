@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class PwarpMainMenu extends Menu {
     public PwarpMainMenu() {
-        super(54, "Pwarp Main Menu", "PwarpMainMenu");
+        super(54, "%player_name%", "PwarpMainMenu");
         ItemStack PURPLE_GLASS = ItemCreator.create(Material.PURPLE_STAINED_GLASS_PANE, "");
         ItemStack MAGENTA_GLASS = ItemCreator.create(Material.MAGENTA_STAINED_GLASS_PANE, "");
 
@@ -23,8 +23,9 @@ public class PwarpMainMenu extends Menu {
         for (Integer i : MAGENTA_GLASS_SLOTS) setItem(i, MAGENTA_GLASS);
 
 
-        ItemStack playerHead = ItemCreator.create(Material.PLAYER_HEAD, "§9%Player_head%",
-                List.of("Lore of item %player_name%", "Empty hand? %player_has_empty_slot%", "More lore"));
+
+        ItemStack playerHead = ItemCreator.create(Material.PLAYER_HEAD, "&8&lTitle &r&3&o%player_name%",
+                List.of("&8&lTitle &r&3&o%player_name%", "Empty hand? %player_has_empty_slot%", "More lore"));
         setItem(4, playerHead);
         setPlayerHeadSlot(4);
     }
