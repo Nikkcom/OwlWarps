@@ -3,11 +3,8 @@ package me.nikkcom.owlWarps.commands.pwarp.subcommands;
 import me.nikkcom.owlWarps.OwlWarps;
 import me.nikkcom.owlWarps.commands.SubCommand;
 import me.nikkcom.owlWarps.playerwarps.PlayerWarpManager;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -51,7 +48,7 @@ public class TeleportCommand extends SubCommand {
             return;
         }
 
-        manager.teleport(player, warpName);
+        manager.getPlayerWarpsByName().get(warpName).teleport(player);
     }
 
 

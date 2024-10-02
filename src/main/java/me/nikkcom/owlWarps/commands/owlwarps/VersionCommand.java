@@ -30,8 +30,9 @@ public class VersionCommand extends SubCommand {
     }
 
 
+
     @Override
-    public List<String> onTabComplete(CommandSender sender, String[] args) {
+    public List<String> onTabComplete(Player player, String[] args) {
         return List.of();
     }
 }

@@ -2,11 +2,11 @@ package me.nikkcom.owlWarps.commands.pwarp.subcommands;
 
 import me.nikkcom.owlWarps.OwlWarps;
 import me.nikkcom.owlWarps.commands.SubCommand;
+import me.nikkcom.owlWarps.configuration.Message;
 import me.nikkcom.owlWarps.configuration.Messages;
 import me.nikkcom.owlWarps.playerwarps.PlayerWarp;
 import me.nikkcom.owlWarps.playerwarps.PlayerWarpManager;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
+import me.nikkcom.owlWarps.utils.StringUtil;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
@@ -43,19 +43,24 @@ public class CreateCommand extends SubCommand {
 
         PlayerWarpManager manager = owlWarps.getPlayerWarpManager();
         if (args.length != 2) {
-            player.sendMessage(getSyntax());
+            player.sendMessage(Message.PWARP_CREATE_HELP.papiColor(player));
             return;
         }
 
         String warpName = args[1];
 
         if (manager.isWarp(warpName)) {
-            player.sendMessage(Messages.getMessage("warp-already-exists"));
+            player.sendMessage(Message.PWARP_CREATE_ALREADYEXISTING.papiColor(player, warpName));
             return;
         }
 
 
         // Check permission to create additional warp. pwarp.6 limit.
+        if (!player.hasPermission("owlwarps.pwarp.create")) {
+            player.sendMessage(Message.PWARP_CREATE_NOPERM.papiColor(player));
+            return;
+        }
+
 
         PlayerWarp warp = new PlayerWarp();
         warp.setLocation(player.getLocation());
@@ -65,7 +70,7 @@ public class CreateCommand extends SubCommand {
         warp.setRawName(warpName.toLowerCase());
 
         manager.addWarp(warp);
-        player.sendMessage(Messages.getMessage("warp-create-successful").replace("%warp%", warp.getRawName()));
+        player.sendMessage(Message.PWARP_CREATE_SUCCESS.papiColor(player, warpName));
 
     }
 

@@ -4,12 +4,19 @@ import me.nikkcom.owlWarps.OwlWarps;
 import me.nikkcom.owlWarps.commands.SubCommand;
 import me.nikkcom.owlWarps.playerwarps.PlayerWarp;
 import me.nikkcom.owlWarps.playerwarps.PlayerWarpManager;
+import me.nikkcom.owlWarps.utils.StringUtil;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ListCommand extends SubCommand {
 
@@ -41,6 +48,7 @@ public class ListCommand extends SubCommand {
         for (PlayerWarp warp : manager.getWarps()) {
             player.sendMessage(warp.getRawName());
         }
+
     }
 
 

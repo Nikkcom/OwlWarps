@@ -2,6 +2,7 @@ package me.nikkcom.owlWarps.commands.pwarp.subcommands;
 
 import me.nikkcom.owlWarps.OwlWarps;
 import me.nikkcom.owlWarps.commands.SubCommand;
+import me.nikkcom.owlWarps.configuration.Message;
 import me.nikkcom.owlWarps.configuration.Messages;
 import me.nikkcom.owlWarps.playerwarps.PlayerWarp;
 import me.nikkcom.owlWarps.playerwarps.PlayerWarpManager;
@@ -45,23 +46,23 @@ public class DeleteCommand extends SubCommand {
 
         PlayerWarpManager manager = owlWarps.getPlayerWarpManager();
         if (args.length != 2) {
-            player.sendMessage(getSyntax());
+            player.sendMessage(Message.PWARP_DELETE_HELP.papiColor(player));
             return;
         }
 
         String warpName = args[1];
 
         if (!manager.isWarp(warpName)) {
-            player.sendMessage(Messages.getMessage("warp-no-exists"));
+            player.sendMessage(Message.PWARP_DELETE_NOEXIST.papiColor(player, warpName));
             return;
         }
         PlayerWarp warp = manager.getPlayerWarpsByName().get(warpName.toLowerCase());
         if (warp.getOwnerUUID() != player.getUniqueId()) {
-            player.sendMessage(Messages.getMessage("no-permission-to-delete-warp"));
+            player.sendMessage(Message.PWARP_DELETE_NOPERM.papiColor(player, warpName));
             return;
         }
 
-        player.sendMessage(Messages.getMessage("warp-delete-successful").replace("%warp%", warp.getRawName()));
+        player.sendMessage(Message.PWARP_DELETE_SUCCESS.papiColor(player, warpName));
         manager.removeWarp(warp);
     }
 
