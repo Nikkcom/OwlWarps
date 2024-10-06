@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class PlayerWarp {
@@ -21,19 +22,14 @@ public class PlayerWarp {
     private Material icon;
     private Location location;
     private HashMap<UUID, Integer> playerRatings;
-    private HashMap<UUID, LocalDateTime> playerLastVisit;
-    private HashMap<UUID, Integer> playerTotalVisits;
-    private PlayerWarpType playerWarpType;
-    private HashMap<UUID, AccessGroup> accessGroups;
+    private HashMap<UUID, LocalDateTime> lastVisitingPlayers;
 
     public PlayerWarp() {
         this.warpUUID = UUID.randomUUID();
         this.icon = Material.PLAYER_HEAD;
         this.timeCreated = LocalDateTime.now();
         playerRatings = new HashMap<>();
-        playerLastVisit = new HashMap<>();
-        playerTotalVisits = new HashMap<>();
-        this.playerWarpType = PlayerWarpType.OTHER;
+        lastVisitingPlayers = new HashMap<>();
         this.isPublic = true;
     }
 
@@ -42,72 +38,93 @@ public class PlayerWarp {
         this.icon = Material.PLAYER_HEAD;
         this.timeCreated = LocalDateTime.now();
     }
-    public void setTimeCreated(LocalDateTime time) {
-        this.timeCreated = time;
-    }
+
     public LocalDateTime getTimeCreated() {
         return timeCreated;
     }
+
+    public void setTimeCreated(LocalDateTime time) {
+        this.timeCreated = time;
+    }
+
     public UUID getUUID() {
         return warpUUID;
     }
-    public void setIcon(Material icon) {
-        this.icon = icon;
-    }
+
     public Material getIcon() {
         return icon;
     }
-    public void setLocation(Location location) {
-        this.location = location;
+
+    public void setIcon(Material icon) {
+        this.icon = icon;
     }
+
     public Location getLocation() {
         return location;
     }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
     public boolean hasVisited(Player player) {
-        return this.playerLastVisit.containsKey(player.getUniqueId());
+        return this.lastVisitingPlayers.containsKey(player.getUniqueId());
     }
-    public HashMap<UUID, Integer> getPlayerTotalVisits() {
-        return playerTotalVisits;
+
+    public Map<UUID, LocalDateTime> getVisitingPlayers() {
+        return lastVisitingPlayers;
     }
-    public void setPlayerTotalVisits(HashMap<UUID, Integer> playerTotalVisits) {
-        this.playerTotalVisits = playerTotalVisits;
+
+    public void addPlayerVisits(Map<UUID, LocalDateTime> playerLastVisit) {
+        this.lastVisitingPlayers.putAll(playerLastVisit);
     }
-    public HashMap<UUID, LocalDateTime> getPlayerLastVisitMap() {
-        return playerLastVisit;
+
+    public void setPlayerVisits(Map<UUID, LocalDateTime> playerLastVisit) {
+        this.lastVisitingPlayers = new HashMap<>();
+        this.lastVisitingPlayers.putAll(playerLastVisit);
     }
-    public void setPlayerLastVisitMap(HashMap<UUID, LocalDateTime> playerLastVisit) {
-        this.playerLastVisit = playerLastVisit;
+
+    public void addPlayerVisit(Player player) {
+        this.lastVisitingPlayers.put(player.getUniqueId(), LocalDateTime.now());
     }
-    public void setPlayerVisited(Player player) {
-        this.playerLastVisit.put(player.getUniqueId(), LocalDateTime.now());
+
+    public void addPlayerVisit(Player player, LocalDateTime time) {
+        this.lastVisitingPlayers.put(player.getUniqueId(), time);
     }
-    public void setPlayerLastVisit(Player player, LocalDateTime time) {
-        this.playerLastVisit.put(player.getUniqueId(), time);
-    }
-    public void removePlayerLastVisit(Player player) {
-        this.playerLastVisit.remove(player.getUniqueId());
+
+    public void removePlayerVisit(Player player) {
+        this.lastVisitingPlayers.remove(player.getUniqueId());
     }
 
 
     // Player rating
-    public HashMap<UUID, Integer> getPlayerRatings() {
+    public Map<UUID, Integer> getPlayerRatings() {
         return playerRatings;
     }
-    public void setPlayerRatings(HashMap<UUID, Integer> playerRatings) {
-        this.playerRatings = playerRatings;
+
+    public void setPlayerRatings(Map<UUID, Integer> playerRatings) {
+        this.playerRatings = new HashMap<>();
+        this.playerRatings.putAll(playerRatings);
     }
-    public void addPlayerWarpRating(Player player, int rating) {
+
+    public void addPlayerRatings(Map<UUID, Integer> playerRatings) {
+        this.playerRatings.putAll(playerRatings);
+    }
+
+    public void addPlayerRating(Player player, int rating) {
         this.playerRatings.put(player.getUniqueId(), rating);
     }
-    public void removePlayerWarpRating(Player player, int rating) {
+
+    public void removePlayerRating(Player player, int rating) {
         this.playerRatings.remove(player.getUniqueId());
     }
+
     public boolean hasRated(Player player) {
         return this.playerRatings.containsKey(player.getUniqueId());
     }
 
 
-    public String getWarpName() {
+    public String getName() {
         return warpName;
     }
 
@@ -123,19 +140,11 @@ public class PlayerWarp {
         this.warpNameRaw = warpNameRaw;
     }
 
-    public PlayerWarpType getPlayerWarpType() {
-        return playerWarpType;
-    }
-
-    public void setPlayerWarpType(PlayerWarpType playerWarpType) {
-        this.playerWarpType = playerWarpType;
-    }
-
     public UUID getOwnerUUID() {
         return ownerUUID;
     }
 
-    public void setOwnerUUID(UUID ownerUUID) {
+    public void setOwner(UUID ownerUUID) {
         this.ownerUUID = ownerUUID;
     }
 
@@ -145,13 +154,6 @@ public class PlayerWarp {
 
     public void setPublic(boolean aPublic) {
         isPublic = aPublic;
-    }
-
-    public void setAccess(Player player, AccessGroup group) {
-        this.accessGroups.put(player.getUniqueId(), group);
-    }
-    public void removeAccess(Player player) {
-        this.accessGroups.remove(player.getUniqueId());
     }
 
     public LocalDateTime getLastActive() {
@@ -164,6 +166,6 @@ public class PlayerWarp {
 
     public void teleport(Player player) {
         player.teleport(getLocation());
-        player.sendMessage(Message.PWARP_TELEPORT_SUCCESS.papiColor(player, getWarpName()));
+        player.sendMessage(Message.PWARP_TELEPORT_SUCCESS.papiColor(player, getName()));
     }
 }
