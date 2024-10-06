@@ -38,28 +38,30 @@ public class PwarpManager extends CommandManager implements CommandExecutor, Tab
         subCommands.add(new DeleteCommand(owlWarps));
         subCommands.add(new ListCommand(owlWarps));
         subCommands.add(new TeleportCommand(owlWarps));
+        subCommands.add(new ReloadCommand(owlWarps));
     }
 
     /**
      * Handles the command execution for pwarp commands.
      *
-     * @param sender The command sender (player or console).
+     * @param sender  The command sender (player or console).
      * @param command The command that was executed.
-     * @param label The alias of the command that was used.
-     * @param args The arguments passed to the command.
+     * @param label   The alias of the command that was used.
+     * @param args    The arguments passed to the command.
+     *
      * @return true if the command was successfully executed; false otherwise.
      */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            if (args.length == 0){
+            if (args.length == 0) {
 
-            MenuCommand menuCommand = new MenuCommand();
-            menuCommand.perform(player, args);
+                MenuCommand menuCommand = new MenuCommand();
+                menuCommand.perform(player, args);
             }
             if (args.length > 0) {
-                for (int i = 0; i < subCommands.size(); i++){
+                for (int i = 0; i < subCommands.size(); i++) {
                     if (args[0].equalsIgnoreCase(subCommands.get(i).getName())) {
                         getSubCommands().get(i).perform(player, args);
                         return true;
@@ -78,7 +80,7 @@ public class PwarpManager extends CommandManager implements CommandExecutor, Tab
             return Collections.emptyList();
         }
 
-        if (!command.getName().equalsIgnoreCase("pwarp")){
+        if (!command.getName().equalsIgnoreCase("pwarp")) {
             return Collections.emptyList();
         }
 
