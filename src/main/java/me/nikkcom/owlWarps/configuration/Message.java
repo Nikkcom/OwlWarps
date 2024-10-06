@@ -22,31 +22,35 @@ public enum Message {
     PWARP_TELEPORT_SUCCESS("pwarp-teleport-success"),
     PWARP_TELEPORT_FAIL("pwarp-teleport-fail");
 
-    private final String key;
+    private final String messageKey;
 
 
     Message(String key) {
-        this.key = key;
+        this.messageKey = key;
 
 
     }
 
     public String get() {
-        return Messages.getMessage(key);
+        return Messages.getMessage(messageKey);
     }
+
     public String papiColor(Player player, String warpName) {
-        String message = Messages.getMessage(key);
+        String message = Messages.getMessage(messageKey);
         message = StringUtil.papiColor(message, player, warpName);
         return message;
     }
+
     public String papiColor(Player player) {
         return papiColor(player, null);
     }
+
     public String papiColor() {
         return papiColor(null);
     }
+
     @Override
     public String toString() {
-        return Messages.getMessage(key); // Return the message directly
+        return Messages.getMessage(messageKey); // Return the message directly
     }
 }
