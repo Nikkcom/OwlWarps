@@ -1,31 +1,28 @@
 package me.nikkcom.owlWarps.GUI;
 
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.awt.*;
-
 public class ClickableItem {
-    private final ItemStack itemStack;
-    private final Menu.MenuClick action;
 
-    public ClickableItem(ItemStack itemStack, Menu.MenuClick action) {
+    private final ItemStack itemStack;
+    private final Menu.MenuClick clickAction;
+
+    public ClickableItem(ItemStack itemStack) {
         this.itemStack = itemStack;
-        this.action = action;
+        this.clickAction = null;
+
     }
 
-    public ItemStack getItemStack() {
+    public ClickableItem(ItemStack itemStack, Menu.MenuClick clickAction) {
+        this.itemStack = itemStack;
+        this.clickAction = clickAction;
+    }
+
+    public ItemStack getItem() {
         return itemStack;
     }
 
     public Menu.MenuClick getAction() {
-        return action;
-    }
-
-    public void execute(Player player, InventoryClickEvent event) {
-        if (action != null) {
-            action.click(player, event);
-        }
+        return clickAction;
     }
 }

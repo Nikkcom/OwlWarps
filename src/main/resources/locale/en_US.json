@@ -1,18 +1,14 @@
 {
-
   "console-onlyPlayer": "This command can only be performed by a player.",
-
   "pwarp-create-getHelp": "&#FFFFC5/pwarp create <name>",
   "pwarp-create-noPermission": "&##FF474DYou do not have permission to create a warp.",
   "pwarp-create-success": "&#90ee90The warp &r{warp} was successfully created.",
   "pwarp-create-alreadyExisting": "&##FF474DThe warp &r{warp}&##FF474D does already exists.",
   "pwarp-create-reachedLimit": "&##FF474DYou cannot create more warps.",
-
   "pwarp-delete-getHelp": "&#FFFFC5/pwarp delete <warp>",
-  "pwarp-delete-noPermission": "&##FF474DYou do now have permission to delete the warp &r{warp}&##FF474D.",
+  "pwarp-delete-noPermission": "&#FF474DYou do now have permission to delete the warp &r{warp}&#FF474D.",
   "pwarp-delete-success": "&#90ee90The warp &r{warp}&#90ee90 was successfully deleted.",
   "pwarp-delete-noExist": "&##FF474DThe warp does &r{warp}&##FF474D not exist.",
-
   "pwarp-teleport-success": "&#90ee90Successfully teleported to &f{warp}",
   "pwarp-teleport-fail": "&##FF474DFailed to teleport to &f{warp}"
 }

@@ -22,7 +22,7 @@ public class DeleteCommand extends SubCommand {
 
     public DeleteCommand(OwlWarps owlWarps) {
         this.owlWarps = owlWarps;
-        manager = owlWarps.getPlayerWarpManager();
+        manager = PlayerWarpManager.getInstance();
     }
 
     @Override
@@ -44,7 +44,7 @@ public class DeleteCommand extends SubCommand {
     public void perform(Player player, String[] args) {
         // Check permission
 
-        PlayerWarpManager manager = owlWarps.getPlayerWarpManager();
+        PlayerWarpManager manager = PlayerWarpManager.getInstance();
         if (args.length != 2) {
             player.sendMessage(Message.PWARP_DELETE_HELP.papiColor(player));
             return;
@@ -57,7 +57,8 @@ public class DeleteCommand extends SubCommand {
             return;
         }
         PlayerWarp warp = manager.getPlayerWarpsByName().get(warpName.toLowerCase());
-        if (warp.getOwnerUUID() != player.getUniqueId()) {
+        if (!warp.getOwnerUUID().toString().equalsIgnoreCase(player.getUniqueId().toString())) {
+            player.sendMessage(warp.getOwnerUUID().toString() + " - " + player.getUniqueId());
             player.sendMessage(Message.PWARP_DELETE_NOPERM.papiColor(player, warpName));
             return;
         }
@@ -70,14 +71,14 @@ public class DeleteCommand extends SubCommand {
     public List<String> onTabComplete(Player player, String[] args) {
 
         List<String> completions = new ArrayList<>();
-        List<PlayerWarp> warps = owlWarps.getPlayerWarpManager().getPlayerWarpsByOwner().get(player.getUniqueId());
+        List<PlayerWarp> warps = PlayerWarpManager.getInstance().getPlayerWarpsByOwner().get(player.getUniqueId());
         for (PlayerWarp warp : warps) completions.add(warp.getRawName());
         if (args.length == 1) {
             return completions;
         } else if (args.length == 2) {
 
             for (String warp : completions) {
-                if (!warp.startsWith(args[1].toLowerCase())){
+                if (!warp.startsWith(args[1].toLowerCase())) {
                     completions.remove(warp);
                 }
             }

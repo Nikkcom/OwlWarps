@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 public class ListCommand extends SubCommand {
 
     private final OwlWarps owlWarps;
+
     public ListCommand(OwlWarps owlWarps) {
         this.owlWarps = owlWarps;
     }
@@ -43,14 +44,13 @@ public class ListCommand extends SubCommand {
     @Override
     public void perform(Player player, String[] args) {
         // Check permission
-        PlayerWarpManager manager = owlWarps.getPlayerWarpManager();
+        PlayerWarpManager manager = PlayerWarpManager.getInstance();
         player.sendMessage("Playerwarps:");
         for (PlayerWarp warp : manager.getWarps()) {
             player.sendMessage(warp.getRawName());
         }
 
     }
-
 
 
     @Override

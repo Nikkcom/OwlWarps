@@ -3,10 +3,8 @@ package me.nikkcom.owlWarps.commands.pwarp.subcommands;
 import me.nikkcom.owlWarps.OwlWarps;
 import me.nikkcom.owlWarps.commands.SubCommand;
 import me.nikkcom.owlWarps.configuration.Message;
-import me.nikkcom.owlWarps.configuration.Messages;
 import me.nikkcom.owlWarps.playerwarps.PlayerWarp;
 import me.nikkcom.owlWarps.playerwarps.PlayerWarpManager;
-import me.nikkcom.owlWarps.utils.StringUtil;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
@@ -41,7 +39,7 @@ public class CreateCommand extends SubCommand {
         // Check permissions to create.
 
 
-        PlayerWarpManager manager = owlWarps.getPlayerWarpManager();
+        PlayerWarpManager manager = PlayerWarpManager.getInstance();
         if (args.length != 2) {
             player.sendMessage(Message.PWARP_CREATE_HELP.papiColor(player));
             return;
@@ -64,7 +62,7 @@ public class CreateCommand extends SubCommand {
 
         PlayerWarp warp = new PlayerWarp();
         warp.setLocation(player.getLocation());
-        warp.setOwnerUUID(player.getUniqueId());
+        warp.setOwner(player.getUniqueId());
         warp.setLastActive(LocalDateTime.now());
         warp.setName(warpName);
         warp.setRawName(warpName.toLowerCase());

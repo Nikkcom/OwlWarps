@@ -19,14 +19,9 @@ public class PwarpMainMenu extends Menu {
         Set<Integer> PURPLE_GLASS_SLOTS = Set.of(0, 2, 6, 8, 18, 26, 27, 35, 45, 47, 51, 53);
         Set<Integer> MAGENTA_GLASS_SLOTS = Set.of(1, 3, 5, 7, 9, 17, 36, 44, 46, 48, 50, 52);
 
-        for (Integer i : PURPLE_GLASS_SLOTS) setItem(i, PURPLE_GLASS);
-        for (Integer i : MAGENTA_GLASS_SLOTS) setItem(i, MAGENTA_GLASS);
-
-
 
         ItemStack playerHead = ItemCreator.create(Material.PLAYER_HEAD, "&8&lTitle &r&3&o%player_name%",
                 List.of("&8&lTitle &r&3&o%player_name%", "Empty hand? %player_has_empty_slot%", "More lore"));
-        setItem(4, playerHead);
-        setPlayerHeadSlot(4);
+
     }
 }

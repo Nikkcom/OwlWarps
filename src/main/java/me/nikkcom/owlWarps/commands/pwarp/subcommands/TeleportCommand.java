@@ -35,7 +35,7 @@ public class TeleportCommand extends SubCommand {
 
     @Override
     public void perform(Player player, String[] args) {
-        PlayerWarpManager manager = owlWarps.getPlayerWarpManager();
+        PlayerWarpManager manager = PlayerWarpManager.getInstance();
 
         if (args.length != 2) {
             player.sendMessage(getSyntax());
@@ -52,17 +52,16 @@ public class TeleportCommand extends SubCommand {
     }
 
 
-
     public List<String> onTabComplete(Player player, String[] args) {
         List<String> completions = new ArrayList<>();
-        Set<String> warps = owlWarps.getPlayerWarpManager().getPlayerWarpsByName().keySet();
+        Set<String> warps = PlayerWarpManager.getInstance().getPlayerWarpsByName().keySet();
         completions.addAll(warps);
         if (args.length == 1) {
             return completions;
         } else if (args.length == 2) {
 
             for (String warp : completions) {
-                if (!warp.startsWith(args[1].toLowerCase())){
+                if (!warp.startsWith(args[1].toLowerCase())) {
                     completions.remove(warp);
                 }
             }

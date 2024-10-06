@@ -10,11 +10,11 @@ import java.awt.*;
 public class StringUtil {
 
     /*
-    *
-    *
-    * https://github.com/SpigotMC/BungeeCord/pull/2883#issuecomment-770429978
-    * frengor
-    * */
+     *
+     *
+     * https://github.com/SpigotMC/BungeeCord/pull/2883#issuecomment-770429978
+     * frengor
+     * */
     public static String papiColor(final String textToParseAndColor, Player player, String warpName) {
         String parsed = PlaceholderAPI.setPlaceholders(player, textToParseAndColor);
         parsed = parsed.replace("{warp}", warpName);
@@ -143,7 +143,7 @@ public class StringUtil {
         return new Color(red, green, blue);
     }
 
-    // Convert a Java Color object to Minecraft's ChatColor format
+    // Convert a Java Color object
     private static String convertToChatColor(Color color) {
         StringBuilder hex = new StringBuilder(Integer.toHexString(color.getRGB()).substring(2).toUpperCase());
         return ChatColor.COLOR_CHAR + "x" + ChatColor.COLOR_CHAR + hex.charAt(0) + ChatColor.COLOR_CHAR + hex.charAt(1)
