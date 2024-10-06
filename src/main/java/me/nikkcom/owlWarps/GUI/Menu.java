@@ -16,23 +16,31 @@ import java.util.*;
 
 // https://www.youtube.com/watch?v=R5ic5DNziAw&t=305s
 
+
+/*
+ * Notes:
+ *
+ * Auto updating every x second.
+ * Should be toggleable so static GUIs are not updated
+ *
+ *
+ * */
+
 public class Menu {
 
     private static final Map<UUID, Menu> openMenus = new HashMap<>();
     private static final Map<String, Set<UUID>> viewers = new HashMap<>();
+    public final UUID uuid;
     private final Map<Integer, MenuClick> menuClickActions = new HashMap<>();
     private final List<Integer> playerHeadSlots = new ArrayList<>();
-    private final Map<Integer, ItemStack> rawItems = new HashMap<>();
-
+    private final Map<Integer, ClickableItem> rawItems = new HashMap<>();
+    private final Inventory inventory;
+    private final String viewerID;
     private MenuClick generalClickAction;
     private MenuClick generalInvClickAction;
     private MenuDrag generalDragAction;
     private MenuOpen openAction;
     private MenuClose closeAction;
-
-    public final UUID uuid;
-    private final Inventory inventory;
-    private final String viewerID;
 
     public Menu(int size, String name) {
         uuid = UUID.randomUUID();
@@ -40,6 +48,7 @@ public class Menu {
         inventory = Bukkit.createInventory(null, size, parsedTitle);
         viewerID = null;
     }
+
     public Menu(int size, String name, String viewerID) {
         uuid = UUID.randomUUID();
         String parsedTitle = PlaceholderAPI.setPlaceholders(null, name);
@@ -47,7 +56,9 @@ public class Menu {
         this.viewerID = viewerID;
     }
 
-    public static Menu getMenu(Player p) { return openMenus.getOrDefault(p.getUniqueId(), null); }
+    public static Menu getMenu(Player p) {
+        return openMenus.getOrDefault(p.getUniqueId(), null);
+    }
 
     public void open(Player p) {
         parseItems(p);
@@ -74,7 +85,9 @@ public class Menu {
         });
     }
 
-    public UUID getUuid() { return uuid; }
+    public UUID getUuid() {
+        return uuid;
+    }
 
     private void addViewer(Player p) {
         if (viewerID == null) return;
@@ -82,6 +95,7 @@ public class Menu {
         list.add(p.getUniqueId());
         viewers.put(viewerID, list);
     }
+
     private void removeViewer(Player p) {
         if (viewerID == null) return;
         Set<UUID> list = viewers.getOrDefault(viewerID, null);
@@ -90,6 +104,7 @@ public class Menu {
         if (list.isEmpty()) viewers.remove(viewerID);
         else viewers.put(viewerID, list);
     }
+
     public Set<Player> getViewers() {
         if (viewerID == null) return new HashSet<>();
         Set<Player> viewerList = new HashSet<>();
@@ -100,43 +115,51 @@ public class Menu {
         }
         return viewerList;
     }
-    public MenuClick getAction(int index) { return menuClickActions.getOrDefault(index, null); }
 
-    public interface MenuClick { void click(Player p, InventoryClickEvent event); }
-    public interface MenuDrag { void drag(Player p, InventoryDragEvent event); }
-    public interface MenuOpen { void open(Player p); }
-    public interface MenuClose { void close(Player p); }
+    public MenuClick getAction(int index) {
+        return menuClickActions.getOrDefault(index, null);
+    }
 
-    private void setRawItem(int index, ItemStack item) {
+    private void setRawItem(int index, ClickableItem item) {
         rawItems.put(index, item);
     }
-    public void setItem(int index, ItemStack item) {
-        setRawItem(index, item);
-    }
+
     public void setItem(int index, ClickableItem clickableItem) {
-        setRawItem(index, clickableItem.getItemStack());
+        setRawItem(index, clickableItem);
         if (clickableItem.getAction() == null) menuClickActions.remove(index);
         else menuClickActions.put(index, clickableItem.getAction());
     }
-    public void setItem(int index, ItemStack item, MenuClick action) {
-        inventory.setItem(index, item);
-        if (action == null) menuClickActions.remove(index);
-        else menuClickActions.put(index, action);
+
+    public MenuClick getGeneralClickAction() {
+        return generalClickAction;
     }
-    public MenuClick getGeneralClickAction() { return generalClickAction; }
 
-    protected void setGeneralClickAction(MenuClick generalClickAction) { this.generalClickAction = generalClickAction; }
+    protected void setGeneralClickAction(MenuClick generalClickAction) {
+        this.generalClickAction = generalClickAction;
+    }
 
-    public MenuClick getGeneralInvClickAction() { return generalInvClickAction; }
+    public MenuClick getGeneralInvClickAction() {
+        return generalInvClickAction;
+    }
 
-    public MenuDrag getGeneralDragAction() { return generalDragAction; }
-
-    protected void setGeneralDragAction(MenuDrag generalDragAction) { this.generalDragAction = generalDragAction; }
-    protected void setOpenAction(MenuOpen openAction) { this.openAction = openAction; }
-
-    protected void setCloseAction(MenuClose closeAction) { this.closeAction = closeAction; }
     protected void setGeneralInvClickAction(MenuClick generalInvClickAction) {
         this.generalInvClickAction = generalInvClickAction;
+    }
+
+    public MenuDrag getGeneralDragAction() {
+        return generalDragAction;
+    }
+
+    protected void setGeneralDragAction(MenuDrag generalDragAction) {
+        this.generalDragAction = generalDragAction;
+    }
+
+    protected void setOpenAction(MenuOpen openAction) {
+        this.openAction = openAction;
+    }
+
+    protected void setCloseAction(MenuClose closeAction) {
+        this.closeAction = closeAction;
     }
 
     /**
@@ -167,24 +190,25 @@ public class Menu {
     private void updatePlayerHeads(Player p) {
 
         for (int i : getPlayerHeadSlots()) {
-            ItemStack head = rawItems.get(i);
-            if (head == null || head.getType() != Material.PLAYER_HEAD || !head.hasItemMeta()) {
+            ClickableItem head = rawItems.get(i);
+            if (head == null || head.getItem().getType() != Material.PLAYER_HEAD || !head.getItem().hasItemMeta()) {
                 continue;
             }
-            SkullMeta meta = (SkullMeta) head.getItemMeta();
+            SkullMeta meta = (SkullMeta) head.getItem().getItemMeta();
             if (meta != null) {
                 meta.setOwningPlayer(Bukkit.getOfflinePlayer(p.getUniqueId()));
-                head.setItemMeta(meta);
+                head.getItem().setItemMeta(meta);
             }
         }
     }
 
     private void parseItems(Player p) {
-        for (Map.Entry<Integer, ItemStack> entry : rawItems.entrySet()) {
-            ItemStack parsedItem = parseItem(entry.getValue(), p);
+        for (Map.Entry<Integer, ClickableItem> entry : rawItems.entrySet()) {
+            ItemStack parsedItem = parseItem(entry.getValue().getItem(), p);
             inventory.setItem(entry.getKey(), parsedItem);
         }
     }
+
     private ItemStack parseItem(ItemStack item, Player p) {
         ItemStack parsedItem = item.clone(); // Clone the original item
         ItemMeta meta = parsedItem.getItemMeta(); // Get the ItemMeta
@@ -206,5 +230,30 @@ public class Menu {
         }
         parsedItem.setItemMeta(meta);
         return parsedItem;
+    }
+
+    public Player getPlayer() {
+        for (Map.Entry<UUID, Menu> entry : openMenus.entrySet()) {
+            if (entry.getValue().getUuid().equals(this.getUuid())) {
+                return Bukkit.getPlayer(entry.getKey());
+            }
+        }
+        return null;
+    }
+
+    public interface MenuClick {
+        void click(Player p, InventoryClickEvent event);
+    }
+
+    public interface MenuDrag {
+        void drag(Player p, InventoryDragEvent event);
+    }
+
+    public interface MenuOpen {
+        void open(Player p);
+    }
+
+    public interface MenuClose {
+        void close(Player p);
     }
 }
