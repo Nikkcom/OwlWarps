@@ -1,30 +1,66 @@
 package me.nikkcom.owlWarps.playerwarps;
 
 import me.nikkcom.owlWarps.OwlWarps;
+import me.nikkcom.owlWarps.data.storage.IDataStorage;
+import me.nikkcom.owlWarps.data.storage.file.PlayerWarpFileDataStorage;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.io.IOException;
+import java.util.*;
 
 public class PlayerWarpManager {
 
+    private static PlayerWarpManager instance;
     private final OwlWarps owlWarps;
+    private final IDataStorage<PlayerWarp> dataStorage;
+    private final List<PlayerWarp> playerWarps;
+    private final HashMap<UUID, List<PlayerWarp>> playerWarpsByOwner;
+    private final HashMap<UUID, PlayerWarp> playerWarpByUUID;
+    private final HashMap<String, PlayerWarp> playerWarpByName;
 
-    private List<PlayerWarp> playerWarps;
-    private HashMap<UUID, List<PlayerWarp>> playerWarpsByOwner;
-    private HashMap<UUID, PlayerWarp> playerWarpByUUID;
-    private HashMap<String, PlayerWarp> playerWarpByName;
 
-
-    public PlayerWarpManager(OwlWarps owlWarps) {
+    public PlayerWarpManager(OwlWarps owlWarps, IDataStorage<PlayerWarp> dataStorage) {
         this.owlWarps = owlWarps;
+        this.dataStorage = dataStorage;
         playerWarps = new ArrayList<>();
         playerWarpsByOwner = new HashMap<>();
         playerWarpByUUID = new HashMap<>();
         playerWarpByName = new HashMap<>();
-        // Load warps
+        loadPlayerWarps();
+
+    }
+
+    public static PlayerWarpManager getInstance() {
+        return instance;
+    }
+
+    public static void initialize(OwlWarps owlWarps, IDataStorage<PlayerWarp> dataStorage) {
+        if (instance == null) {
+            instance = new PlayerWarpManager(owlWarps, dataStorage);
+        }
+    }
+
+    public void loadPlayerWarps() {
+        addWarps(dataStorage.loadAll());
+    }
+
+    public void savePlayerWarps() {
+        Bukkit.getLogger().info("SavePlayerWarps are called breh");
+        dataStorage.saveAll(playerWarps);
+    }
+
+    public void unloadPlayerWarps() {
+        Bukkit.getLogger().info("UnLoadPlayerWarps in manager class is called");
+        savePlayerWarps();
+        clearAllPlayerWarps();
+    }
+
+    public void reload() {
+        // BUkkit log reload
+        clearAllPlayerWarps();
+        addWarps(dataStorage.loadAll());
+
     }
 
     public void addWarp(PlayerWarp warp) {
@@ -37,6 +73,12 @@ public class PlayerWarpManager {
         playerWarpByUUID.put(warp.getUUID(), warp);
 
         playerWarpByName.put(warp.getRawName(), warp);
+    }
+
+    public void addWarps(List<PlayerWarp> playerWarpList) {
+        for (PlayerWarp playerWarp : playerWarpList) {
+            addWarp(playerWarp);
+        }
     }
 
     public void removeWarp(PlayerWarp warp) {
@@ -53,6 +95,7 @@ public class PlayerWarpManager {
         playerWarpByUUID.remove(warp.getUUID());
 
         playerWarpByName.remove(warp.getRawName(), warp);
+        dataStorage.delete(warp);
     }
 
     public void teleport(Player player, String name) {
@@ -71,6 +114,7 @@ public class PlayerWarpManager {
     public boolean isWarp(UUID playerWarpUUID) {
         return playerWarpByUUID.containsKey(playerWarpUUID);
     }
+
     public boolean isWarp(String warpName) {
         return playerWarpByName.containsKey(warpName);
     }
@@ -78,7 +122,15 @@ public class PlayerWarpManager {
     public HashMap<UUID, List<PlayerWarp>> getPlayerWarpsByOwner() {
         return playerWarpsByOwner;
     }
+
     public HashMap<String, PlayerWarp> getPlayerWarpsByName() {
         return playerWarpByName;
+    }
+
+    private void clearAllPlayerWarps() {
+        playerWarps.clear();
+        playerWarpsByOwner.clear();
+        playerWarpByUUID.clear();
+        playerWarpByName.clear();
     }
 }
