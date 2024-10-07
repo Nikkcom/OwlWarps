@@ -1,9 +1,8 @@
 package me.nikkcom.owlWarps.data.storage;
 
 import java.util.List;
-import java.util.UUID;
 
-public interface IDataStorage<T> {
+public interface DataStorage<T> {
     /**
      * Saves the given object to the data storage.
      *

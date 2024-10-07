@@ -1,16 +1,14 @@
 package me.nikkcom.owlWarps.GUI.menus;
 
-import me.nikkcom.owlWarps.GUI.Menu;
+import me.nikkcom.owlWarps.GUI.MenuImpl;
 import me.nikkcom.owlWarps.utils.ItemCreator;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.List;
 import java.util.Set;
 
-public class PwarpMainMenu extends Menu {
+public class PwarpMainMenu extends MenuImpl {
     public PwarpMainMenu() {
         super(54, "%player_name%", "PwarpMainMenu");
         ItemStack PURPLE_GLASS = ItemCreator.create(Material.PURPLE_STAINED_GLASS_PANE, "");

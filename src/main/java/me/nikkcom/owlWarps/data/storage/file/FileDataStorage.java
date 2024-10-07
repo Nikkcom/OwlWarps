@@ -1,7 +1,7 @@
 package me.nikkcom.owlWarps.data.storage.file;
 
 import me.nikkcom.owlWarps.OwlWarps;
-import me.nikkcom.owlWarps.data.storage.IDataStorage;
+import me.nikkcom.owlWarps.data.storage.DataStorage;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -11,7 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.logging.Level;
 
-public abstract class FileDataStorage<T> implements IDataStorage<T> {
+public abstract class FileDataStorage<T> implements DataStorage<T> {
 
     protected final File file;
     protected YamlConfiguration yamlConfig;

@@ -1,26 +1,24 @@
 package me.nikkcom.owlWarps.playerwarps;
 
 import me.nikkcom.owlWarps.OwlWarps;
-import me.nikkcom.owlWarps.data.storage.IDataStorage;
-import me.nikkcom.owlWarps.data.storage.file.PlayerWarpFileDataStorage;
+import me.nikkcom.owlWarps.data.storage.DataStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.io.IOException;
 import java.util.*;
 
 public class PlayerWarpManager {
 
     private static PlayerWarpManager instance;
     private final OwlWarps owlWarps;
-    private final IDataStorage<PlayerWarp> dataStorage;
+    private final DataStorage<PlayerWarp> dataStorage;
     private final List<PlayerWarp> playerWarps;
     private final HashMap<UUID, List<PlayerWarp>> playerWarpsByOwner;
     private final HashMap<UUID, PlayerWarp> playerWarpByUUID;
     private final HashMap<String, PlayerWarp> playerWarpByName;
 
 
-    public PlayerWarpManager(OwlWarps owlWarps, IDataStorage<PlayerWarp> dataStorage) {
+    public PlayerWarpManager(OwlWarps owlWarps, DataStorage<PlayerWarp> dataStorage) {
         this.owlWarps = owlWarps;
         this.dataStorage = dataStorage;
         playerWarps = new ArrayList<>();
@@ -35,7 +33,7 @@ public class PlayerWarpManager {
         return instance;
     }
 
-    public static void initialize(OwlWarps owlWarps, IDataStorage<PlayerWarp> dataStorage) {
+    public static void initialize(OwlWarps owlWarps, DataStorage<PlayerWarp> dataStorage) {
         if (instance == null) {
             instance = new PlayerWarpManager(owlWarps, dataStorage);
         }

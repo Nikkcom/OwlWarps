@@ -4,7 +4,7 @@ import me.nikkcom.owlWarps.GUI.events.MenuEvents;
 import me.nikkcom.owlWarps.commands.pwarp.PwarpManager;
 import me.nikkcom.owlWarps.configuration.ConfigManager;
 import me.nikkcom.owlWarps.configuration.Messages;
-import me.nikkcom.owlWarps.data.storage.IDataStorage;
+import me.nikkcom.owlWarps.data.storage.DataStorage;
 import me.nikkcom.owlWarps.data.storage.file.MessageFileDataStorage;
 import me.nikkcom.owlWarps.data.storage.file.PlayerWarpFileDataStorage;
 import me.nikkcom.owlWarps.playerwarps.PlayerWarp;
@@ -20,8 +20,8 @@ public final class OwlWarps extends JavaPlugin {
     private static String loggerPrefix;
     private final String localePath = "locale/en_US.json";
     private ConfigManager configManager;
-    private IDataStorage<PlayerWarp> playerWarpStorage;
-    private IDataStorage<String> messagesStorage;
+    private DataStorage<PlayerWarp> playerWarpStorage;
+    private DataStorage<String> messagesStorage;
 
     public static void log(Level level, String message) {
         if (debugValue <= level.intValue()) {

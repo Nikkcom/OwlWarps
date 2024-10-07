@@ -39,6 +39,8 @@ public class PwarpManager extends CommandManager implements CommandExecutor, Tab
         subCommands.add(new ListCommand(owlWarps));
         subCommands.add(new TeleportCommand(owlWarps));
         subCommands.add(new ReloadCommand(owlWarps));
+        subCommands.add(new TestMenuOneCommand());
+        subCommands.add(new TestMenuTwoCommand());
     }
 
     /**

@@ -1,12 +1,14 @@
 package me.nikkcom.owlWarps.GUI.events;
 
 import me.nikkcom.owlWarps.GUI.Menu;
+import me.nikkcom.owlWarps.GUI.MenuImpl;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 
 /**
@@ -45,21 +47,23 @@ public class MenuEvents implements Listener {
     @EventHandler
     public void inventoryClickEvent(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
-        Menu menu = Menu.getMenu(p);
-        if (menu != null) {
-            e.setCancelled(true);
-            if (e.getClickedInventory() != null) {
-                // When a player clicks an item in its own inventory.
-                if (e.getRawSlot() > e.getClickedInventory().getSize()) {
-                    if (menu.getGeneralInvClickAction() != null) menu.getGeneralInvClickAction().click(p, e);
-
-                    // Handles when a player clicks a player in the opened inventory.
-                }else if (menu.getGeneralClickAction() != null) menu.getGeneralClickAction().click(p, e);
-            }
-            Menu.MenuClick menuClick = menu.getAction(e.getRawSlot());
-            if (menuClick != null) menuClick.click(p, e);
+        Menu menu = MenuImpl.getMenu(p);
+        if (menu == null) {
+            return;
         }
+        e.setCancelled(true);
+        if (e.getClickedInventory() != null) {
+            // When a player clicks an item in its own inventory.
+            if (e.getRawSlot() > e.getClickedInventory().getSize()) {
+                if (menu.getGeneralInvClickAction() != null) menu.getGeneralInvClickAction().click(p, e);
+
+                // Handles when a player clicks a player in the opened inventory.
+            } else if (menu.getGeneralClickAction() != null) menu.getGeneralClickAction().click(p, e);
+        }
+        MenuClick menuClick = menu.getAction(e.getRawSlot());
+        if (menuClick != null) menuClick.click(p, e);
     }
+
     /**
      * Handles the InventoryCloseEvent, which is triggered when the player
      * closes the inventory.
@@ -69,7 +73,22 @@ public class MenuEvents implements Listener {
     @EventHandler
     public void inventoryClose(InventoryCloseEvent e) {
         Player p = (Player) e.getPlayer();
-        Menu menu = Menu.getMenu(p);
+        Menu menu = MenuImpl.getMenu(p);
         if (menu != null) menu.remove();
+    }
+
+    /**
+     * Handles the PlayerDisconnectEvent, which is triggered when a player
+     * disconnects from the server.
+     *
+     * @param event The PlayerDisconnectEvent containing information about the event.
+     */
+    @EventHandler
+    public void playerDisconnectEvent(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        Menu menu = MenuImpl.getMenu(player); // Get the current menu for the player
+        if (menu != null) {
+            menu.remove(); // Clean up the menu if it's open
+        }
     }
 }

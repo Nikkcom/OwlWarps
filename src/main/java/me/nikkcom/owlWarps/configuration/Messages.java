@@ -1,7 +1,7 @@
 package me.nikkcom.owlWarps.configuration;
 
 import me.nikkcom.owlWarps.OwlWarps;
-import me.nikkcom.owlWarps.data.storage.IDataStorage;
+import me.nikkcom.owlWarps.data.storage.DataStorage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,9 +10,9 @@ import java.util.logging.Level;
 public class Messages {
 
     private static Map<String, String> messages = new HashMap<>();
-    private static IDataStorage<String> messageStorage;
+    private static DataStorage<String> messageStorage;
 
-    public static void initialize(IDataStorage<String> dataStorage) {
+    public static void initialize(DataStorage<String> dataStorage) {
         messageStorage = dataStorage;
         loadMessages();
     }

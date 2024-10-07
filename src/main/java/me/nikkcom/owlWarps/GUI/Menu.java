@@ -1,259 +1,148 @@
 package me.nikkcom.owlWarps.GUI;
 
-import me.clip.placeholderapi.PlaceholderAPI;
-import me.nikkcom.owlWarps.utils.StringUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import me.nikkcom.owlWarps.GUI.events.MenuClick;
+import me.nikkcom.owlWarps.GUI.events.MenuClose;
+import me.nikkcom.owlWarps.GUI.events.MenuDrag;
+import me.nikkcom.owlWarps.GUI.events.MenuOpen;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.*;
+import java.util.Set;
+import java.util.UUID;
 
-// https://www.youtube.com/watch?v=R5ic5DNziAw&t=305s
-
-
-/*
- * Notes:
- *
- * Auto updating every x second.
- * Should be toggleable so static GUIs are not updated
- *
- *
- * */
-
-public class Menu {
-
-    private static final Map<UUID, Menu> openMenus = new HashMap<>();
-    private static final Map<String, Set<UUID>> viewers = new HashMap<>();
-    public final UUID uuid;
-    private final Map<Integer, MenuClick> menuClickActions = new HashMap<>();
-    private final List<Integer> playerHeadSlots = new ArrayList<>();
-    private final Map<Integer, ClickableItem> rawItems = new HashMap<>();
-    private final Inventory inventory;
-    private final String viewerID;
-    private MenuClick generalClickAction;
-    private MenuClick generalInvClickAction;
-    private MenuDrag generalDragAction;
-    private MenuOpen openAction;
-    private MenuClose closeAction;
-
-    public Menu(int size, String name) {
-        uuid = UUID.randomUUID();
-        String parsedTitle = PlaceholderAPI.setPlaceholders(null, name);
-        inventory = Bukkit.createInventory(null, size, parsedTitle);
-        viewerID = null;
-    }
-
-    public Menu(int size, String name, String viewerID) {
-        uuid = UUID.randomUUID();
-        String parsedTitle = PlaceholderAPI.setPlaceholders(null, name);
-        inventory = Bukkit.createInventory(null, size, parsedTitle);
-        this.viewerID = viewerID;
-    }
-
-    public static Menu getMenu(Player p) {
-        return openMenus.getOrDefault(p.getUniqueId(), null);
-    }
-
-    public void open(Player p) {
-        parseItems(p);
-        updatePlayerHeads(p);
-        p.openInventory(inventory);
-        openMenus.put(p.getUniqueId(), this);
-        if (viewerID != null) addViewer(p);
-        if (openAction != null) openAction.open(p);
-        if (!playerHeadSlots.isEmpty()) updatePlayerHeads(p);
-
-    }
-
-    public void remove() {
-        openMenus.entrySet().removeIf(entry -> {
-            if (entry.getValue().getUuid() == uuid) {
-                Player p = Bukkit.getPlayer(entry.getKey());
-                if (p != null) {
-                    if (viewerID != null) removeViewer(p);
-                    if (closeAction != null) closeAction.close(p);
-                }
-                return true;
-            }
-            return false;
-        });
-    }
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    private void addViewer(Player p) {
-        if (viewerID == null) return;
-        Set<UUID> list = viewers.getOrDefault(viewerID, new HashSet<>());
-        list.add(p.getUniqueId());
-        viewers.put(viewerID, list);
-    }
-
-    private void removeViewer(Player p) {
-        if (viewerID == null) return;
-        Set<UUID> list = viewers.getOrDefault(viewerID, null);
-        if (list == null) return;
-        list.remove(p.getUniqueId());
-        if (list.isEmpty()) viewers.remove(viewerID);
-        else viewers.put(viewerID, list);
-    }
-
-    public Set<Player> getViewers() {
-        if (viewerID == null) return new HashSet<>();
-        Set<Player> viewerList = new HashSet<>();
-        for (UUID uuid : viewers.getOrDefault(viewerID, new HashSet<>())) {
-            Player p = Bukkit.getPlayer(uuid);
-            if (p == null) continue;
-            viewerList.add(p);
-        }
-        return viewerList;
-    }
-
-    public MenuClick getAction(int index) {
-        return menuClickActions.getOrDefault(index, null);
-    }
-
-    private void setRawItem(int index, ClickableItem item) {
-        rawItems.put(index, item);
-    }
-
-    public void setItem(int index, ClickableItem clickableItem) {
-        setRawItem(index, clickableItem);
-        if (clickableItem.getAction() == null) menuClickActions.remove(index);
-        else menuClickActions.put(index, clickableItem.getAction());
-    }
-
-    public MenuClick getGeneralClickAction() {
-        return generalClickAction;
-    }
-
-    protected void setGeneralClickAction(MenuClick generalClickAction) {
-        this.generalClickAction = generalClickAction;
-    }
-
-    public MenuClick getGeneralInvClickAction() {
-        return generalInvClickAction;
-    }
-
-    protected void setGeneralInvClickAction(MenuClick generalInvClickAction) {
-        this.generalInvClickAction = generalInvClickAction;
-    }
-
-    public MenuDrag getGeneralDragAction() {
-        return generalDragAction;
-    }
-
-    protected void setGeneralDragAction(MenuDrag generalDragAction) {
-        this.generalDragAction = generalDragAction;
-    }
-
-    protected void setOpenAction(MenuOpen openAction) {
-        this.openAction = openAction;
-    }
-
-    protected void setCloseAction(MenuClose closeAction) {
-        this.closeAction = closeAction;
-    }
+/**
+ * Represents a general interface for handling a menu in the plugin.
+ */
+public interface Menu {
 
     /**
-     * Adds a player head slot index to the list of player head slots.
+     * Opens the menu for a player.
      *
-     * @param index the index of the slot where a player's head should be displayed
+     * @param player The player to open the menu for.
      */
-    public void setPlayerHeadSlot(int index) {
-        this.playerHeadSlots.add(index);
-    }
+    void open(Player player);
 
     /**
-     * Retrieves the list of indices for the player head slots.
-     *
-     * @return a list of integers representing the indices of player head slots
+     * Removes the menu from the system, typically called when the menu is closed.
      */
-    public List<Integer> getPlayerHeadSlots() {
-        return this.playerHeadSlots;
-    }
+    void remove();
 
     /**
-     * Updates the player heads in the inventory for the specified player.
-     * This method iterates through the registered player head slots and updates
-     * each corresponding item to represent the head of the specified player.
+     * Retrieves the current inventory associated with this menu.
      *
-     * @param p the player whose head should be set in the designated slots
+     * @return The inventory displayed to the player.
      */
-    private void updatePlayerHeads(Player p) {
+    Inventory getInventory();
 
-        for (int i : getPlayerHeadSlots()) {
-            ClickableItem head = rawItems.get(i);
-            if (head == null || head.getItem().getType() != Material.PLAYER_HEAD || !head.getItem().hasItemMeta()) {
-                continue;
-            }
-            SkullMeta meta = (SkullMeta) head.getItem().getItemMeta();
-            if (meta != null) {
-                meta.setOwningPlayer(Bukkit.getOfflinePlayer(p.getUniqueId()));
-                head.getItem().setItemMeta(meta);
-            }
-        }
-    }
+    /**
+     * Adds a button to a specific index in the inventory.
+     *
+     * @param index  The index where the button should be placed.
+     * @param button The button to place in the menu.
+     */
+    void addMenuitem(int index, MenuItem button);
 
-    private void parseItems(Player p) {
-        for (Map.Entry<Integer, ClickableItem> entry : rawItems.entrySet()) {
-            ItemStack parsedItem = parseItem(entry.getValue().getItem(), p);
-            inventory.setItem(entry.getKey(), parsedItem);
-        }
-    }
 
-    private ItemStack parseItem(ItemStack item, Player p) {
-        ItemStack parsedItem = item.clone(); // Clone the original item
-        ItemMeta meta = parsedItem.getItemMeta(); // Get the ItemMeta
+    /**
+     * Gets the unique identifier of the menu.
+     *
+     * @return The UUID of the menu
+     */
+    UUID getUuid();
 
-        if (meta != null) {
-            String parsedName = PlaceholderAPI.setPlaceholders(p, meta.getDisplayName());
-            parsedName = StringUtil.color(parsedName);
-            meta.setDisplayName(parsedName);
+    /**
+     * Updates all static items in the menu by re-parsing placeholders and setting them in their respective slots.
+     *
+     * @param player The player for whom the items are being updated.
+     */
+    void updateStaticItems(Player player);
 
-            if (meta.getLore() != null && !meta.getLore().isEmpty()) {
-                List<String> parsedLore = new ArrayList<>();
-                for (String str : meta.getLore()) {
-                    str = PlaceholderAPI.setPlaceholders(p, str);
-                    str = StringUtil.color(str);
-                    parsedLore.add(str);
-                }
-                meta.setLore(parsedLore);
-            }
-        }
-        parsedItem.setItemMeta(meta);
-        return parsedItem;
-    }
+    /**
+     * Sets an item in the menu with an associated menu click action.
+     *
+     * @param index    The index of the slot.
+     * @param menuItem The menu item to set.
+     */
+    void setItem(int index, MenuItem menuItem);
 
-    public Player getPlayer() {
-        for (Map.Entry<UUID, Menu> entry : openMenus.entrySet()) {
-            if (entry.getValue().getUuid().equals(this.getUuid())) {
-                return Bukkit.getPlayer(entry.getKey());
-            }
-        }
-        return null;
-    }
+    /**
+     * Retrieves the general click action for the menu.
+     *
+     * @return the general click action associated with the menu.
+     */
+    MenuClick getGeneralClickAction();
 
-    public interface MenuClick {
-        void click(Player p, InventoryClickEvent event);
-    }
+    /**
+     * Sets the general click action for the menu.
+     *
+     * @param generalClickAction the action to be set as the general click action.
+     */
+    void setGeneralClickAction(MenuClick generalClickAction);
 
-    public interface MenuDrag {
-        void drag(Player p, InventoryDragEvent event);
-    }
+    /**
+     * Retrieves the general inventory click action for the menu.
+     *
+     * @return the general inventory click action associated with the menu.
+     */
+    MenuClick getGeneralInvClickAction();
 
-    public interface MenuOpen {
-        void open(Player p);
-    }
+    /**
+     * Sets the general inventory click action for the menu.
+     *
+     * @param generalInvClickAction the action to be set as the general inventory click action.
+     */
+    void setGeneralInvClickAction(MenuClick generalInvClickAction);
 
-    public interface MenuClose {
-        void close(Player p);
-    }
+    /**
+     * Retrieves the general drag action for the menu.
+     *
+     * @return the general drag action associated with the menu.
+     */
+    MenuDrag getGeneralDragAction();
+
+    /**
+     * Sets the general drag action for the menu.
+     *
+     * @param generalDragAction the action to be set as the general drag action.
+     */
+    void setGeneralDragAction(MenuDrag generalDragAction);
+
+    /**
+     * Sets the action to be executed when the menu is opened.
+     *
+     * @param openAction the action to be set as the open action.
+     */
+    void setOpenAction(MenuOpen openAction);
+
+    /**
+     * Sets the action to be executed when the menu is closed.
+     *
+     * @param closeAction the action to be set as the close action.
+     */
+    void setCloseAction(MenuClose closeAction);
+
+    /**
+     * Retrieves the current viewers of the menu.
+     *
+     * @return A set of players currently viewing this menu.
+     */
+    Set<Player> getViewers();
+
+    /**
+     * Gets the action associated with a specific slot index.
+     *
+     * @param index The index of the slot.
+     *
+     * @return The MenuClick action associated with the slot.
+     */
+    MenuClick getAction(int index);
+
+    /**
+     * Retrieves the player associated with the current menu.
+     *
+     * @return the player associated with this menu, or null if no player is found.
+     */
+    Player getPlayer();
+
+    int clickaction();
 }
